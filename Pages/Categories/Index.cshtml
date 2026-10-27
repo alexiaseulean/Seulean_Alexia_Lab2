@@ -1,0 +1,56 @@
+﻿@page "{id:int?}"
+@model Seulean_Alexia_Lab2.Pages_Categories.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Category[0].CategoryName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CategoryData.Categories)
+        {
+            string selectedRow = "";
+            if (item.ID == Model.CategoryID)
+            {
+                selectedRow = "table-success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                <td>
+                    <a asp-page="./Index" asp-route-id="@item.ID">Select</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.CategoryData.Books != null)
+{
+    <h3>Books in Selected Category</h3>
+    <table class="table">
+        <tr>
+            <td>
+                @{
+                    foreach (var b in Model.CategoryData.Books)
+                    {
+                        @b.Title
+                        @: - @b.Author?.FullName
+                        <br />
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+}
