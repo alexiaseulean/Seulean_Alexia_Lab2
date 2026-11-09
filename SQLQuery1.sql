@@ -1,10 +1,5 @@
-﻿DELETE FROM BookCategory
-WHERE ID NOT IN (
-    SELECT MIN(ID) FROM BookCategory GROUP BY BookID, CategoryID
-);
+﻿INSERT INTO AspNetRoles (Id, Name, NormalizedName, ConcurrencyStamp)
+VALUES ('1', 'Admin', 'ADMIN', NEWID()),
+       ('2', 'User',  'USER',  NEWID());
 
-SELECT c.CategoryName, b.Title
-FROM BookCategory bc
-JOIN Book b ON b.ID = bc.BookID
-JOIN Category c ON c.ID = bc.CategoryID
-ORDER BY c.CategoryName;
+SELECT * FROM AspNetRoles;

@@ -20,27 +20,29 @@ public class DeleteModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
-        if (id is null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var borrowing = await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
-        if (borrowing is null)
+        var borrowing = await _context.Borrowing
+            .Include(b => b.Member)
+            .Include(b => b.Book)
+                .ThenInclude(b => b.Author)
+            .FirstOrDefaultAsync(m => m.ID == id);
+
+        if (borrowing == null)
         {
             return NotFound();
         }
-        else
-        {
-            Borrowing = borrowing;
-        }
 
+        Borrowing = borrowing;
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(int? id)
     {
-        if (id is null)
+        if (id == null)
         {
             return NotFound();
         }

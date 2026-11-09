@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Seulean_Alexia_Lab2.Models;
 using Seulean_Alexia_Lab2.Data;
@@ -20,26 +21,27 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
-        if (id is null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var borrowing = await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
-        if (borrowing is null)
+        if (borrowing == null)
         {
             return NotFound();
         }
         Borrowing = borrowing;
+
+        LoadLists();
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
+            LoadLists();
             return Page();
         }
 
@@ -51,21 +53,27 @@ public class EditModel : PageModel
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BorrowingExists(Borrowing.ID))
+            if (!_context.Borrowing.Any(e => e.ID == Borrowing.ID))
             {
                 return NotFound();
             }
-            else
-            {
-                throw;
-            }
+            throw;
         }
 
         return RedirectToPage("./Index");
     }
 
-    private bool BorrowingExists(int id)
+    private void LoadLists()
     {
-        return _context.Borrowing.Any(e => e.ID == id);
+        var bookList = _context.Book
+            .Include(b => b.Author)
+            .Select(x => new
+            {
+                x.ID,
+                BookFullName = x.Title + " - " + x.Author.LastName + " " + x.Author.FirstName
+            });
+
+        ViewData["BookID"] = new SelectList(bookList, "ID", "BookFullName");
+        ViewData["MemberID"] = new SelectList(_context.Member, "ID", "FullName");
     }
 }

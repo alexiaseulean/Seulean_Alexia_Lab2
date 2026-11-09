@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,9 @@ using Seulean_Alexia_Lab2.Models;
 
 namespace Seulean_Alexia_Lab2.Pages_Books
 {
+
+    [Authorize(Roles = "Admin")]
+
     public class DeleteModel : PageModel
     {
         private readonly Seulean_Alexia_Lab2Context _context;
